@@ -11,6 +11,8 @@ type ValidationResponse struct {
 	Message string `json:"message"`
 }
 
+type EmptyObject struct{}
+
 func ValidResponse(status, message string) ValidationResponse {
 	return ValidationResponse{
 		Status:  status,

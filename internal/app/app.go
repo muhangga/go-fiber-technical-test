@@ -40,12 +40,23 @@ func (s *server) RunServer() {
 	activityService := service.NewActivitiesService(activityRepository)
 	activityDelivery := delivery.NewActivitiesDelivery(activityService)
 
+	todoRepository := repository.NewTodoRepository(s.DB())
+	todoService := service.NewTodoService(todoRepository)
+	todoDelivery := delivery.NewTodoDelivery(todoService)
+
 	activity_groups := app.Group("/activity-groups")
+	activity_groups.Post("/", activityDelivery.CreateActivities)
 	activity_groups.Get("/", activityDelivery.GetAllActivities)
 	activity_groups.Get("/:id", activityDelivery.GetActivitiesByID)
-	activity_groups.Post("/", activityDelivery.CreateActivities)
 	activity_groups.Patch("/:id", activityDelivery.UpdateActivities)
 	activity_groups.Delete("/:id", activityDelivery.DeleteActivities)
+
+	todo := app.Group("/todo-items")
+	todo.Post("/", todoDelivery.CreateTodo)
+	todo.Get("/", todoDelivery.FindAll)
+	todo.Get("/:id", todoDelivery.GetTodoById)
+	todo.Patch("/:id", todoDelivery.UpdateTodo)
+	todo.Delete("/:id", todoDelivery.DeleteTodo)
 
 	app.Listen(":3030")
 }

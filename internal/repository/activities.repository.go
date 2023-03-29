@@ -59,13 +59,11 @@ func (r *ActivitiesRepositoryImpl) Create(activities entity.Activities) (entity.
 	return activities, nil
 }
 
-func (r *ActivitiesRepositoryImpl) Update(req entity.Activities) (entity.Activities, error) {
-
-	var activities entity.Activities
+func (r *ActivitiesRepositoryImpl) Update(activities entity.Activities) (entity.Activities, error) {
 
 	tx := r.db.Begin()
 
-	err := r.db.Save(&req).Error
+	err := tx.Table("activities").Save(&activities).Error
 	if err != nil {
 		if tx.Rollback().Error != nil {
 			log.Error().Msgf("Error when trying to rollback: %v", err)

@@ -44,18 +44,26 @@ func (s *ActivitiesServiceImpl) CreateActivities(activities dto.ActivitiesDTO) (
 
 func (s *ActivitiesServiceImpl) UpdateActivities(req dto.ActivitiesDTO, id int) (entity.Activities, error) {
 
-	activities, err := s.activitiesRepository.GetByID(int64(id))
+	activity, err := s.activitiesRepository.GetByID(int64(id))
 	if err != nil {
-		return activities, err
+		return activity, err
 	}
 
-	activities.Title = req.Title
+	activity.Title = req.Title
 
-	updated, err := s.activitiesRepository.Update(activities)
+	// cek jika input email kosong maka otomatis ter isi email dari database
+	if req.Email == "" {
+		activity.Email = activity.Email
+	} else {
+		activity.Email = req.Email
+	}
+
+	activity.UpdatedAt = req.UpdatedAt
+
+	updated, err := s.activitiesRepository.Update(activity)
 	if err != nil {
 		return updated, err
 	}
-
 	return updated, nil
 }
 
