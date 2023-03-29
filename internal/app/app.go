@@ -3,6 +3,10 @@ package app
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/muhangga/config"
+	"github.com/muhangga/internal/delivery"
+	"github.com/muhangga/internal/helper"
+	"github.com/muhangga/internal/repository"
+	"github.com/muhangga/internal/service"
 	"gorm.io/gorm"
 )
 
@@ -30,9 +34,18 @@ func (s *server) RunServer() {
 
 	app := s.httpServer
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!!!!!!!!!!!!!!!")
-	})
+	app.Use(helper.HandleCors())
+
+	activityRepository := repository.NewActivitiesRepository(s.DB())
+	activityService := service.NewActivitiesService(activityRepository)
+	activityDelivery := delivery.NewActivitiesDelivery(activityService)
+
+	activity_groups := app.Group("/activity-groups")
+	activity_groups.Get("/", activityDelivery.GetAllActivities)
+	activity_groups.Get("/:id", activityDelivery.GetActivitiesByID)
+	activity_groups.Post("/", activityDelivery.CreateActivities)
+	activity_groups.Patch("/:id", activityDelivery.UpdateActivities)
+	activity_groups.Delete("/:id", activityDelivery.DeleteActivities)
 
 	app.Listen(":3030")
 }
