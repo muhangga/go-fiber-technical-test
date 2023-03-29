@@ -42,13 +42,6 @@ func (r *TodoRepositoryImpl) GetById(id int64) (entity.Todo, error) {
 }
 
 func (r *TodoRepositoryImpl) Create(todo entity.Todo) (entity.Todo, error) {
-
-	var todoCreate entity.Todo
-	todoCreate.Title = todo.Title
-	todoCreate.ActivityGroupID = todo.ActivityGroupID
-	todoCreate.IsActive = todo.IsActive
-	todoCreate.Title = todo.Title
-
 	tx := r.db.Begin()
 
 	save := tx.Table("todos").Create(&todo).Error
