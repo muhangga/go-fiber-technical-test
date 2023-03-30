@@ -14,12 +14,26 @@ import (
 
 func OpenConn() (*gorm.DB, error) {
 
+	if os.Getenv("MYSQL_HOST") == "" {
+		fmt.Printf("Environment variable MYSQL_HOST is not set")
+	}
+	if os.Getenv("MYSQL_USER") == "" {
+		fmt.Printf("Environment variable MYSQL_USER is not set")
+	}
+	if os.Getenv("MYSQL_PORT") == "" {
+		fmt.Printf("Environment variable MYSQL_PORT is not set")
+	}
+	if os.Getenv("MYSQL_DATABASE") == "" {
+		fmt.Printf("Environment variable MYSQL_DATABASE is not set")
+	}
+
 	dbHost := os.Getenv("MYSQL_HOST")
 	dbUser := os.Getenv("MYSQL_USER")
+	dbPassword := os.Getenv("MYSQL_PASSWORD")
 	dbPort := os.Getenv("MYSQL_PORT")
 	dbDatabase := os.Getenv("MYSQL_DATABASE")
 
-	dsn := fmt.Sprintf("%s:@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbHost, dbPort, dbDatabase)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPassword, dbHost, dbPort, dbDatabase)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

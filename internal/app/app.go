@@ -36,6 +36,10 @@ func (s *server) RunServer() {
 
 	app.Use(helper.HandleCors())
 
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World!")
+	})
+
 	activityRepository := repository.NewActivitiesRepository(s.DB())
 	activityService := service.NewActivitiesService(activityRepository)
 	activityDelivery := delivery.NewActivitiesDelivery(activityService)
